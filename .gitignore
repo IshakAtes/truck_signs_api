@@ -96,8 +96,10 @@ ipython_config.py
 # pyenv
 .python-version
 *.env
-**/simple_env_config.env
+**/simple_env.env
 **/*.env
+simple_env.env
+
 
 
 

@@ -1,0 +1,5 @@
+## All entries in here that can be evaluated and matched via glob matching will be ignored by
+## Dockerfile COPY instructions
+.gitignore
+.git/
+__pycache__

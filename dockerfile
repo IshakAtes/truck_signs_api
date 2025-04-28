@@ -1,29 +1,32 @@
 # 1. Starte mit einem Base-Image
-FROM python
+FROM python:3.9-slim
 
 # 2. Setze das Arbeitsverzeichnis im Container
 WORKDIR /app
 
 # 3. Kopiere notwendige Projektdateien und Abhängigkeiten in den Container
 COPY requirements.txt /app/
-COPY ./babyshop_app /app
+COPY . /app
 
-# 4. Installiere python-dotenv, um .env-Dateien zu laden (falls du es benötigst)
-RUN pip install python-dotenv
+#Bash-Skript benutzt nc, aber im python:3.9-slim Image ist netcat nicht vorinstalliert!
+RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
+
 
 # 5. Installiere alle Abhängigkeiten
 RUN pip install -r requirements.txt
 
-# 6. Führe Migrationen und collectstatic aus
-# RUN python manage.py collectstatic --noinput
-RUN python manage.py makemigrations
-RUN python manage.py migrate
+RUN cp ./truck_signs_designs/settings/simple_env_config.env .env
+
+
+
+# ENV DB_HOST=db
+# ENV DB_PORT=5432
 
 # 7. Exponiere den Port, auf dem die Anwendung läuft
-EXPOSE 8025
+EXPOSE ${APP_PORT}
 
 # Variable mit der ip
 ENV SERVER_IP=localhost
 
-# 8. Starte die Anwendung
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8025"]
+# Entrypoint
+ENTRYPOINT [ "./entrypoint.sh" ]
