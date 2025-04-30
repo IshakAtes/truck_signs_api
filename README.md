@@ -10,12 +10,13 @@
 </div>
 
 ## Table of Contents
-* [Description](#description)
-* [Installation](#installation)
-* [Screenshots of the Django Backend Admin Panel](#screenshots)
-* [Useful Links](#useful_links)
-
-
+- [🚛 Truck Signs API](#-truck-signs-api)
+- [⚡ Quickstart](#-quickstart)
+- [⚙️ Environment Variables](#️-environment-variables)
+- [📁 Project Structure](#-project-structure)
+- [💡 Notes](#-notes)
+- [Useful Links](#useful-links)
+- [Screenshots of the Django Backend Admin Panel](#screenshots-of-the-django-backend-admin-panel)
 
 ## 🚛 Truck Signs API
 
@@ -40,15 +41,7 @@ docker network create --driver=bridge mynet
 
 ***2.2 Start PostgreSQL***
 ``` bash
-docker run --name db \
-  -e POSTGRES_DB=truck-signs \
-  -e POSTGRES_USER=foo \
-  -e POSTGRES_PASSWORD=foopassword \
-  -p 5432:5432 \
-  -v pgdata:/var/lib/postgresql/data \
-  --network mynet \
-  --restart unless-stopped \
-  -d postgres:13
+docker run --name db -e POSTGRES_DB=truck-signs -e POSTGRES_USER=foo -e POSTGRES_PASSWORD=foopassword -p 5432:5432 -v pgdata:/var/lib/postgresql/data --network mynet --restart unless-stopped -d postgres:13
 ```
 
 ***2.3 Build the application***
@@ -58,38 +51,37 @@ docker build -t truck-app -f Dockerfile .
 
 ***2.4 Run the app***
 ``` bash
-docker run --env-file truck_signs_designs/settings/example_simple_env.env \
-  --name app \
-  --network mynet \
-  -p <EXAMPLE_HOST>:<EXAMPLE_PORT> \
-  -e SERVER_IP=localhost \
-  -d truck-app
+docker run --env-file truck_signs_designs/settings/example_env.env --name app --network mynet -p <EXAMPLE_HOST>:<EXAMPLE_PORT> -e SERVER_IP=localhost -d truck-app
 ```
+> [!Note]
+> Replace <EXAMPLE_PORT> with the desired port, e.g. 8020.
 
-## Congratulations 🎉 !!! The App should be running in [localhost:<EXAMPLE_PORT>](http://localhost:<4200>)
+## Congratulations 🎉 !!! The App should be running in `localhost:<EXAMPLE_PORT>`
 **Optional step** To create a super user run:
 ``` bash
-python manage.py createsuperuser
+docker exec -it app python manage.py createsuperuser
 ```
+> [!Note]
+> Superuser creation does not work directly in Docker with python. The createsuperuser command would have to be called via `docker exec`.
 
 
 ## ⚙️ Environment Variables
-The application uses a .env file for managing sensitive environment variables [.example_env](https://github.com/IshakAtes/baby-tools-shop/blob/main/.envExample).
+The application uses a `.env` file for managing sensitive environment variables [.example_env](https://github.com/IshakAtes/truck_signs_api/blob/lab/truck_signs_designs/settings/.example_env).
 
-If you're running the app inside Docker, the necessary .env file will be copied automatically via the Dockerfile:
+If you're running the app inside Docker, the necessary `.env` file will be copied automatically via the `Dockerfile`:
 ``` dockerfile
 RUN cp ./truck_signs_designs/settings/simple_env_config.env .env
 ```
 
 ## 📁 Project Structure
 - truck_signs_designs/ – Django project configuration
-- entrypoint.sh – Entry script that waits for DB, applies migrations, collects static files, and runs Gunicorn
-- Dockerfile – Container setup for the app
-- requirements.txt – Python dependencies
+- `entrypoint.sh` – Entry script that waits for DB, applies migrations, collects static files, and runs Gunicorn
+- `Dockerfile` – Container setup for the app
+- `requirements.txt` – Python dependencies
 
 ## 💡 Notes
-- The app uses environment variables from simple_env_config.env. Adjust if needed.
-- Data is stored persistently in the pgdata Docker volume.
+- The app uses environment variables from `simple_env.env`. Adjust if needed.
+- Data is stored persistently in the `pgdata` Docker volume.
 
 
 <a name="useful_links"></a>
