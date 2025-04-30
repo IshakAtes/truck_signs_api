@@ -1,32 +1,30 @@
-# 1. Starte mit einem Base-Image
+# 1. Verwende ein minimales Python-Image als Basis
 FROM python:3.9-slim
 
-# 2. Setze das Arbeitsverzeichnis im Container
+# 2. Setze das Arbeitsverzeichnis im Container auf /app
 WORKDIR /app
 
-# 3. Kopiere notwendige Projektdateien und Abhängigkeiten in den Container
+# 3. Kopiere die requirements.txt und den restlichen Code in das Arbeitsverzeichnis
 COPY requirements.txt /app/
 COPY . /app
 
-#Bash-Skript benutzt nc, aber im python:3.9-slim Image ist netcat nicht vorinstalliert!
+# Hinweis: Das Bash-Skript verwendet 'nc', welches nicht im Base-Image enthalten ist
+# Installiere daher netcat-openbsd
 RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
 
 
-# 5. Installiere alle Abhängigkeiten
+# 5. Installiere die Python-Abhängigkeiten
 RUN pip install -r requirements.txt
 
+# 6. Kopiere eine Umgebungsdatei für die Konfiguration (lokale Einstellungen)
 RUN cp ./truck_signs_designs/settings/simple_env_config.env .env
 
 
-
-# ENV DB_HOST=db
-# ENV DB_PORT=5432
-
-# 7. Exponiere den Port, auf dem die Anwendung läuft
+# 7. Exponiere den Port, über den die Anwendung erreichbar ist
 EXPOSE ${APP_PORT}
 
-# Variable mit der ip
+# 8. Setze eine Umgebungsvariable für die Server-IP
 ENV SERVER_IP=localhost
 
-# Entrypoint
+# 9. Definiere das Startskript für den Container
 ENTRYPOINT [ "./entrypoint.sh" ]
