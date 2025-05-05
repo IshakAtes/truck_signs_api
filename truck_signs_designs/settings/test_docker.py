@@ -10,9 +10,10 @@ environ.Env.read_env()
 SECRET_KEY = env("DOCKER_SECRET_KEY")
 DEBUG = True
 
+PORT = env("APP_PORT", default="4200")
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://localhost:8020"
+    f"http://localhost:{PORT}",
 ]
 
 

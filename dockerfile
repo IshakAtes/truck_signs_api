@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y netcat-openbsd && apt-get clean
 RUN pip install -r requirements.txt
 
 # 6. copy an environment file for the configuration (local settings)
-RUN cp ./truck_signs_designs/settings/simple_env_config.env .env
+RUN cp ./truck_signs_designs/settings/simple_env.env .env
 
 # 7. expose the port through which the application is accessible
 EXPOSE ${APP_PORT}
