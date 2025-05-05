@@ -12,11 +12,11 @@
 ## Table of Contents
 - [🚛 Truck Signs API](#-truck-signs-api)
 - [⚡ Quickstart](#-quickstart)
+- [🧰 Usage – Advanced Configuration & Customization](#-usage--advanced-configuration--customization)
 - [⚙️ Environment Variables](#️-environment-variables)
 - [📁 Project Structure](#-project-structure)
-- [💡 Notes](#-notes)
-- [Useful Links](#useful-links)
-- [Screenshots of the Django Backend Admin Panel](#screenshots-of-the-django-backend-admin-panel)
+- [🔗 Useful Links](#useful-links)
+- [🖼️ Screenshots of the Django Backend Admin Panel](#screenshots-of-the-django-backend-admin-panel)
 
 ## 🚛 Truck Signs API
 
@@ -26,7 +26,7 @@ This is a Django-based backend API for an online shop that allows users to brows
 ## ⚡ Quickstart
 **1. Clone the repository**
 ``` bash
-git clone https://github.com/your-username/truck-signs-api.git
+git clone https://github.com/IshakAtes/truck_signs_api.git
 cd truck-signs-api
 ```
 
@@ -41,7 +41,15 @@ docker network create --driver=bridge mynet
 
 ***2.2 Start PostgreSQL***
 ``` bash
-docker run --name db -e POSTGRES_DB=truck-signs -e POSTGRES_USER=foo -e POSTGRES_PASSWORD=foopassword -p 5432:5432 -v pgdata:/var/lib/postgresql/data --network mynet --restart unless-stopped -d postgres:13
+docker run --name db \
+  -e POSTGRES_DB=truck-signs \
+  -e POSTGRES_USER=foo \
+  -e POSTGRES_PASSWORD=foopassword \
+  -p 5432:5432 \
+  -v pgdata:/var/lib/postgresql/data \
+  --network mynet \
+  --restart unless-stopped \
+  -d postgres:13
 ```
 
 ***2.3 Build the application***
@@ -51,22 +59,136 @@ docker build -t truck-app -f Dockerfile .
 
 ***2.4 Run the app***
 ``` bash
-docker run --env-file truck_signs_designs/settings/example_env.env --name app --network mynet -p <EXAMPLE_HOST>:<EXAMPLE_PORT> -e SERVER_IP=localhost -d truck-app
+docker run \
+  --env-file truck_signs_designs/settings/example_env.env \
+  --name app \
+  --network mynet \
+  -p <EXAMPLE_HOST>:<EXAMPLE_PORT> \
+  -e SERVER_IP=localhost \
+  -d truck-app
+
 ```
 > [!Note]
 > Replace <EXAMPLE_PORT> with the desired port, e.g. 8020.
 
-## Congratulations 🎉 !!! The App should be running in `localhost:<EXAMPLE_PORT>`
-**Optional step** To create a super user run:
+
+**🛠️ Required step (unless a superuser already exists)**
+To create a Django superuser, run:
+``` bash
+docker exec -it app python manage.py createsuperuser
+
+  Username (leave blank to use 'root'): ishak
+  Email address: ishak@test.com
+  Password: *********
+  Password (again): *********
+  Superuser created successfully.
+```
+> [!Note]
+> Superuser creation cannot be done during image build. It must be executed via `docker exec` after the container is running.
+
+**Congratulations 🎉 !!! The App should be running in `localhost:<EXAMPLE_PORT>`**
+
+
+## 🧰 Usage – Advanced Configuration & Customization
+This section walks you through the same steps as the ⚡Quickstart, but in more detail – including explanations of what each step does, and how to customize it for your own environment.
+
+**1. Clone the repository**
+✅ This clones the project files locally. You can modify the source code or settings as needed.
+``` bash
+git clone https://github.com/IshakAtes/truck_signs_api.git
+cd truck-signs-api
+```
+
+**2. Build and Run the Application with Docker**
+> [!Note]
+> 🧠 Note: This project does not use Docker Compose. Both the database and app containers are started manually, allowing for fine-grained control and easier debugging.
+
+
+**2.1 Create a Docker network**
+✅ This creates an isolated network (`mynet`) so your PostgreSQL and Django app can communicate securely within Docker.
+``` bash
+docker network create --driver=bridge mynet
+```
+> [!Note]
+> 💡 You can choose a different name instead of `mynet`, but make sure you use the same name in the next steps when connecting containers.
+
+
+**2.2 Start the PostgreSQL container**
+✅ This starts a PostgreSQL 13 container with the given credentials and a persistent volume (`pgdata`).
+``` bash
+docker run --name db \
+  -e POSTGRES_DB=truck-signs \
+  -e POSTGRES_USER=foo \
+  -e POSTGRES_PASSWORD=foopassword \
+  -p 5432:5432 \
+  -v pgdata:/var/lib/postgresql/data \
+  --network mynet \
+  --restart unless-stopped \
+  -d postgres:13
+```
+> [!Note]
+> ⚙️ Customizing:
+> - Change `POSTGRES_USER` and `POSTGRES_PASSWORD` for security.
+> - Modify `-p 5432:5432` if your host already uses port 5432.
+> - You can change `--name db` if you run multiple databases.
+
+
+**2.3 Build the application image**
+✅ This uses your `Dockerfile` to create a Docker image called `truck-app`.
+``` bash
+docker build -t truck-app -f Dockerfile .
+```
+> [!Note]
+> ⚙️ If you modify your code or requirements, rebuild the image with this command to reflect changes.
+
+
+**2.4 Run the app container**
+✅ This starts the Django app container and connects it to the `mynet` network so it can reach the database.
+``` bash
+docker run \
+  --env-file truck_signs_designs/settings/example_env.env \
+  --name app \
+  --network mynet \
+  -p <EXAMPLE_HOST>:<EXAMPLE_PORT> \
+  -e SERVER_IP=localhost \
+  -d truck-app
+```
+> [!Note]
+> ⚙️ Customizing:
+> - Replace `<EXAMPLE_PORT>` with e.g. `8020` to access the app at `localhost:8020`.
+> - You can remove `-e SERVER_IP=localhost` if your app handles hostnames dynamically.
+> - Replace the `--env-file` path if your `.env` file is located elsewhere.
+
+
+**3. Create a Django superuser (Required unless already created)**
+✅ This gives you access to the Django admin interface.
 ``` bash
 docker exec -it app python manage.py createsuperuser
 ```
 > [!Note]
-> Superuser creation does not work directly in Docker with python. The createsuperuser command would have to be called via `docker exec`.
+> ⚠️ Note: You cannot create a superuser during image build – it must be done after the app is running.
+> 🧠 The docker exec -it app command runs the createsuperuser command inside the live container named app. You will be prompted to enter a username, email, and password interactively.
+> Example:
+``` bash
+Username (leave blank to use 'root'): ishak
+Email address: ishak@test.com
+Password: *********
+Password (again): *********
+Superuser created successfully.
+```
+
+
+**✅ App Verification**
+🎉 Congratulations! The app should now be running at:
+``` bash
+http://localhost:<EXAMPLE_PORT>
+```
+> [!Note]
+> Open it in your browser and log in with the superuser credentials.
 
 
 ## ⚙️ Environment Variables
-The application uses a `.env` file for managing sensitive environment variables [.example_env](https://github.com/IshakAtes/truck_signs_api/blob/lab/truck_signs_designs/settings/.example_env).
+The application uses a `.env` file for managing sensitive environment variables [.example_env](https://github.com/IshakAtes/truck_signs_api/blob/lab/truck_signs_designs/settings/.example_env). Adjust if needed.
 
 If you're running the app inside Docker, the necessary `.env` file will be copied automatically via the `Dockerfile`:
 ``` dockerfile
@@ -78,10 +200,6 @@ RUN cp ./truck_signs_designs/settings/simple_env_config.env .env
 - `entrypoint.sh` – Entry script that waits for DB, applies migrations, collects static files, and runs Gunicorn
 - `Dockerfile` – Container setup for the app
 - `requirements.txt` – Python dependencies
-
-## 💡 Notes
-- The app uses environment variables from `simple_env.env`. Adjust if needed.
-- Data is stored persistently in the `pgdata` Docker volume.
 
 
 <a name="useful_links"></a>
