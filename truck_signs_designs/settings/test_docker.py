@@ -11,9 +11,11 @@ SECRET_KEY = env("DOCKER_SECRET_KEY")
 DEBUG = True
 
 PORT = env("APP_PORT", default="4200")
+IP = env("IP_ADRESS", default="localhost")
 
 CORS_ALLOWED_ORIGINS = [
-    f"http://localhost:{PORT}",
+    f"http://{IP}",
+    f"http://{IP}:{PORT}",
 ]
 
 
@@ -40,3 +42,9 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env("DOCKER_EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("DOCKER_EMAIL_HOST_PASSWORD")
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    env("IP_ADRESS", default="localhost"),
+]
