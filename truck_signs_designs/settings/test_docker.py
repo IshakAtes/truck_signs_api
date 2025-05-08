@@ -14,7 +14,7 @@ PORT = env("APP_PORT", default="4200")
 IP = env("IP_ADRESS", default="localhost")
 
 CORS_ALLOWED_ORIGINS = [
-    f"http://{IP}",
+    f"http://{IP}", 
     f"http://{IP}:{PORT}",
 ]
 
