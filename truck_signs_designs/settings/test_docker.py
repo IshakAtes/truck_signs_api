@@ -15,7 +15,7 @@ IP = env("IP_ADRESS", default="localhost")
 
 CORS_ALLOWED_ORIGINS = [
     f"http://{IP}", 
-    f"http://{IP}:{PORT}",
+    f"http://{IP}:{PORT}", # Port angabe führt zum fehler, es muss nur die ip adresse angegeben werden. Diese zeile kann eigentlich gelöscht werden. Server läuft, dont touch a running System ;)
 ]
 
 

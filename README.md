@@ -84,7 +84,7 @@ docker exec -it app python manage.py createsuperuser
   Superuser created successfully.
 ```
 > [!Note]
-> Superuser creation cannot be done during image build. It must be executed via `docker exec` after the container is running.
+> ⚠️ Note: You cannot create a superuser during image build – it must be done after the app is running.
 
 **Congratulations 🎉 !!! The App should be running in `localhost:<EXAMPLE_PORT>`**
 
@@ -101,7 +101,7 @@ cd truck-signs-api
 
 **2. Build and Run the Application with Docker**
 > [!Note]
-> 🧠 Note: This project does not use Docker Compose. Both the database and app containers are started manually, allowing for fine-grained control and easier debugging.
+> 🧠 Note: This project does not use Docker Compose. Both the database and app containers are started manually and added to the same network.
 
 
 **2.1 Create a Docker network**
@@ -128,7 +128,7 @@ docker run --name db \
 ```
 > [!Note]
 > ⚙️ Customizing:
-> - Change `POSTGRES_USER` and `POSTGRES_PASSWORD` for security.
+> - `POSTGRES_USER` and `POSTGRES_PASSWORD` are just examples - you should use your own secure credentials.
 > - Modify `-p 5432:5432` if your host already uses port 5432.
 > - You can change `--name db` if you run multiple databases.
 
@@ -166,7 +166,7 @@ docker run \
 docker exec -it app python manage.py createsuperuser
 ```
 > [!Note]
-> ⚠️ Note: You cannot create a superuser during image build – it must be done after the app is running.
+> ⚠️ Note: You cannot create a superuser during image build – it must be done when the Container is running.
 > 🧠 The docker exec -it app command runs the createsuperuser command inside the live container named app. You will be prompted to enter a username, email, and password interactively.
 > Example:
 ``` bash
@@ -184,7 +184,9 @@ Superuser created successfully.
 http://localhost:<EXAMPLE_PORT>
 ```
 > [!Note]
-> Open it in your browser and log in with the superuser credentials.
+> Open the address in your browser and log in using the superuser credentials.<br>
+> **Important:** The app is running locally on your own computer at `localhost` — it is **not available on the internet.** <br>
+> No one else can access it unless you explicitly set up hosting (e.g., on a server or in the cloud).
 
 
 ## ⚙️ Environment Variables
