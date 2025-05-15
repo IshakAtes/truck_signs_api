@@ -95,6 +95,11 @@ ipython_config.py
 
 # pyenv
 .python-version
+*.env
+**/simple_env.env
+
+
+
 
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
@@ -156,3 +161,6 @@ Thumbs.db
 
 # profiling data
 .prof
+
+
+**/security_datas.md
